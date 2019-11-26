@@ -45,7 +45,7 @@ export function handler<T1 = never, T2 = never, T3 = never, T4 = never, TRespons
                 if (result.success) {
 
                     const validatedBody = options.response ?
-                        await validateOrThrow(result.body, options.response.options) : result.body;
+                        await convertAndValidate(result.body, options.response) : result.body;
 
                     return {
                         statusCode: result.statusCode,
