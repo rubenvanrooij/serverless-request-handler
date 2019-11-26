@@ -1,0 +1,36 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+      "tslint:recommended"
+    ],
+    "linterOptions": {
+      "exclude": [
+        "src/**/*.snap"
+      ]
+    },
+    "jsRules": {},
+    "rules": {
+      "quotemark": [
+        true,
+        "single"
+      ],
+      "variable-name": [
+        true,
+        "ban-keywords",
+        "check-format",
+        "allow-leading-underscore",
+        "allow-snake-case"
+      ],
+      "object-literal-sort-keys": false,
+      "ordered-imports": false,
+      "interface-name": false,
+      "trailing-comma": false,
+      "no-var-requires": false,
+      "align": [
+        true,
+        "parameters",
+        "statements"
+      ]
+    },
+    "rulesDirectory": []
+  }

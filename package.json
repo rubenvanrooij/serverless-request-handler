@@ -1,0 +1,25 @@
+{
+  "name": "serverless-request-handler",
+  "description": "A request handler that uses class-transformer and class-validator to create a type-safe serverless handler",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "tslint": "tslint -p tsconfig.json --format stylish"
+  },
+  "author": "Ruben v. Rooij",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.36",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "aws-lambda": "^0.1.2",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.11.0",
+    "class-validator-jsonschema": "^1.3.0",
+    "http-status-codes": "^1.4.0"
+  }
+}
