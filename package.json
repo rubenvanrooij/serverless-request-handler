@@ -31,12 +31,12 @@
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
+    "semantic-release": "^15.13.31",
     "ts-jest": "^24.2.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
-    "typescript": "^3.7.2",
-    "semantic-release": "^15.13.31"
+    "typescript": "^3.7.2"
   },
   "dependencies": {
     "aws-lambda": "^0.1.2",
