@@ -112,21 +112,24 @@ workflows:
     jobs:
       - checkout
       - test:
-          branches:
-            ignore:
-              - master
+          filters:
+            branches:
+              ignore:
+                - master
           requires:
             - checkout
       - lint:
-          branches:
-            ignore:
-              - master
+          filters:
+            branches:
+              ignore:
+                - master
           requires:
             - checkout
       - build:
-          branches:
-            ignore:
-              - master
+          filters:
+            branches:
+              ignore:
+                - master
           requires:
             - test
             - lint
