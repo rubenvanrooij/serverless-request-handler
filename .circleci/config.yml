@@ -94,16 +94,8 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
       - run: 
-          name: Install dot-json package
-          command: npm install dot-json
-
-      - run:
-          name: Write version to package.json
-          command: $(yarn bin)/dot-json package.json version ${CIRCLE_TAG:1}
-
-      - run:
-          name: Publish to NPM
-          command: npm publish --access=public
+          name: Release
+          command: yarn semantic-release
 
 workflows:
   version: 2
