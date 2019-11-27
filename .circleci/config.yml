@@ -112,12 +112,21 @@ workflows:
     jobs:
       - checkout
       - test:
+          branches:
+            ignore:
+              - master
           requires:
             - checkout
       - lint:
+          branches:
+            ignore:
+              - master
           requires:
             - checkout
       - build:
+          branches:
+            ignore:
+              - master
           requires:
             - test
             - lint
@@ -126,40 +135,35 @@ workflows:
     jobs:
       - checkout:
           filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
             branches:
-              ignore: /.*/
+              only: 
+                - master
       - test:
           filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
             branches:
-              ignore: /.*/
+              only: 
+                - master
           requires:
             - checkout
       - lint:
           filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
             branches:
-              ignore: /.*/
+              only: 
+                - master
           requires:
             - checkout
       - build:
           filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
             branches:
-              ignore: /.*/
+              only: 
+                - master
           requires:
             - test
             - lint
       - deploy:
           filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
             branches:
-              ignore: /.*/
+              only: 
+                - master
           requires:
             - build
