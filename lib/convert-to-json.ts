@@ -1,5 +1,6 @@
 import { BAD_REQUEST } from 'http-status-codes';
-import { HttpError, Logger } from './models';
+import { Logger } from './models';
+import { HttpError } from './http-error';
 
 export function convertToJson(value?: string | null, logger?: Logger): any {
     try {

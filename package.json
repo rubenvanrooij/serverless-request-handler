@@ -1,7 +1,7 @@
 {
   "name": "serverless-request-handler",
   "description": "A request handler that uses class-transformer and class-validator to create a type-safe serverless handler",
-  "version": "0.1.5",
+  "version": "0.0.0-development",
   "repository": {
     "type": "git",
     "url": "https://github.com/rubenvanrooij/serverless-request-handler.git"
@@ -16,24 +16,28 @@
     "prepare": "install-self-peers -- --ignore-scripts",
     "send-coverage": "codecov -f coverage/*.json",
     "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "semantic-release": "semantic-release"
   },
   "author": "Ruben v. Rooij",
   "license": "MIT",
   "devDependencies": {
     "@team-griffin/install-self-peers": "^1.1.1",
     "@types/aws-lambda": "^8.10.36",
+    "@types/jest": "^24.0.23",
     "@types/prettier": "^1.19.0",
     "@types/reflect-metadata": "^0.1.0",
     "@types/rimraf": "^2.0.3",
     "codecov": "^3.6.1",
+    "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.2.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.2",
+    "semantic-release": "^15.13.31"
   },
   "dependencies": {
     "aws-lambda": "^0.1.2",

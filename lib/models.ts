@@ -35,11 +35,13 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
     logger?: Logger;
 }
 
+export interface Dictionary { [name: string]: string; }
+
 export interface ProxyEvent<TBody, TQueryParams, TPathParameters, THeaders> {
-    body: TBody extends never ? any : TBody;
-    queryParameters: TQueryParams extends never ? any : TQueryParams;
-    headers: THeaders extends never ? any : THeaders;
-    pathParameters: TPathParameters extends never ? any : TPathParameters;
+    body: TBody;
+    queryParameters: TQueryParams;
+    headers: THeaders;
+    pathParameters: TPathParameters;
     httpMethod: string;
     path: string;
 }
@@ -62,21 +64,6 @@ export interface IHttpError {
     message?: string;
     success: false;
     details: IErrorDetail[];
-}
-
-export class HttpError extends Error implements IHttpError {
-
-    public readonly statusCode: number;
-    public readonly success: false;
-    public readonly details: IErrorDetail[];
-
-    constructor(statusCode: number, message?: string, ...details: IErrorDetail[]) {
-        super(message);
-
-        this.statusCode = statusCode;
-        this.success = false;
-        this.details = details;
-    }
 }
 
 export type ResultResponse<T> = Promise<IOk<T> | IHttpError>;
