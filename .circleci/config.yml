@@ -13,6 +13,7 @@ whitelist: &whitelist
     - package.json
     - README.md
     - tsconfig.json
+    - jest.config.js
     - tslint.json
 version: 2
 jobs:
