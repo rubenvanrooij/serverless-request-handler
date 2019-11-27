@@ -5,94 +5,75 @@ defaults: &defaults
 
 whitelist: &whitelist
   paths:
-    - .npmignore
-    - coverage/*
     - dist/*
     - node_modules/*
-    - lib/*
-    - package.json
-    - README.md
-    - tsconfig.json
-    - jest.config.js
-    - tslint.json
+    
 version: 2
 jobs:
   checkout:
     <<: *defaults
-
     steps:
       - checkout
-
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies-
-
       - run:
           name: Install Dependencies
           command: yarn install
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
       - persist_to_workspace:
           root: ~/repo
           <<: *whitelist
 
   lint:
     <<: *defaults
-
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
-
       - run:
           name: Lint TypeScript code
           command: yarn lint
 
   test:
     <<: *defaults
-
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
-
       - run:
           name: Test TypeScript code
           command: yarn test
-
       - persist_to_workspace:
           root: ~/repo
           <<: *whitelist
 
   build:
     <<: *defaults
-
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
-
       - run:
           name: Build TypeScript code
           command: yarn build
-
       - persist_to_workspace:
           root: ~/repo
           <<: *whitelist
 
   deploy:
     <<: *defaults
-
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
-
       - run: 
           name: Write NPM Token to ~/.npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-
       - run: 
           name: Release
           command: yarn semantic-release
