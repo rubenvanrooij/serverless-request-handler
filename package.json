@@ -14,7 +14,6 @@
     "format": "prettier --write {src,test}/**/*.ts",
     "lint": "tslint --project . src/**/*.ts",
     "prepare": "install-self-peers -- --ignore-scripts",
-    "send-coverage": "codecov -f coverage/*.json",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "semantic-release": "semantic-release"
