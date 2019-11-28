@@ -1,7 +1,7 @@
 {
   "name": "serverless-request-handler",
   "description": "A request handler that uses class-transformer and class-validator to create a type-safe serverless handler",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/rubenvanrooij/serverless-request-handler.git"
