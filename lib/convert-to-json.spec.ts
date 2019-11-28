@@ -1,7 +1,7 @@
 import { BAD_REQUEST } from 'http-status-codes';
 import { HttpError } from './http-error';
 import { convertToJson } from './convert-to-json';
-import { Logger } from './models';
+import winston from 'winston';
 
 describe('convert-to-json', () => {
     it('should throw an error when invalid json is provided', () => {
@@ -17,7 +17,7 @@ describe('convert-to-json', () => {
             error: jest.fn()
         };
 
-        expect(() => convertToJson('', mockLogger as any as Logger))
+        expect(() => convertToJson('', mockLogger as any as winston.Logger))
             .toThrow(new HttpError(BAD_REQUEST, 'Invalid json'));
 
         expect(mockLogger.error).toHaveBeenCalledTimes(1);

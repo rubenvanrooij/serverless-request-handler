@@ -1,20 +1,12 @@
 import { ValidatorOptions } from 'class-validator';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { APIGatewayProxyResult } from 'aws-lambda';
+import winston from 'winston';
 
 export interface ValidateOptions<T> {
     classType: ClassType<T>;
     options?: ValidatorOptions;
     description?: string;
-}
-
-type LogMethod = (message: string | object) => void;
-
-export interface Logger {
-    error: LogMethod;
-    warn: LogMethod;
-    info: LogMethod;
-    debug: LogMethod;
 }
 
 export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, TResponse> {
@@ -32,7 +24,7 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
     /**
      * Optional logger. If none is set a default console logger will be used
      */
-    logger?: Logger;
+    logger?: winston.Logger;
 }
 
 export interface Dictionary { [name: string]: string; }

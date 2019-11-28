@@ -1,8 +1,8 @@
 import { BAD_REQUEST } from 'http-status-codes';
-import { Logger } from './models';
 import { HttpError } from './http-error';
+import winston from 'winston';
 
-export function convertToJson(value?: string | null, logger?: Logger): any {
+export function convertToJson(value?: string | null, logger?: winston.Logger): any {
     try {
         return JSON.parse(value || '');
     } catch (error) {
