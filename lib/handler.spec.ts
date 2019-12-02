@@ -149,6 +149,7 @@ describe('handler', () => {
         const options = {
             response: {
                 classType: DummyStringClass,
+                statusCode: 200,
                 options: { whitelist: true }
             }
         };
@@ -169,6 +170,7 @@ describe('handler', () => {
         const options = {
             response: {
                 classType: DummyStringClass,
+                statusCode: 200,
                 options: { whitelist: true }
             }
         };

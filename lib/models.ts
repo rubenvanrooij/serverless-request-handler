@@ -3,10 +3,15 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { APIGatewayProxyResult } from 'aws-lambda';
 import winston from 'winston';
 
+// TODO: Add required option
 export interface ValidateOptions<T> {
     classType: ClassType<T>;
     options?: ValidatorOptions;
     description?: string;
+}
+
+export interface ValidateResponseOption<T> extends ValidateOptions<T> {
+    statusCode: number;
 }
 
 export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, TResponse> {
@@ -14,7 +19,8 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
     queryParameters?: ValidateOptions<TQueryParams>;
     pathParameters?: ValidateOptions<TPathParameters>;
     headers?: ValidateOptions<THeaders>;
-    response?: ValidateOptions<TResponse>;
+    response?: ValidateResponseOption<TResponse>;
+    errorResponses?: Array<ValidateResponseOption<unknown>>;
 
     /**
      * Optional error transformer to customize the error response
