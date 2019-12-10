@@ -1,4 +1,4 @@
-import { IOk, IErrorDetail, IHttpError } from '.';
+import { IOk, IErrorDetail, HttpError } from '.';
 
 export class Result {
     public static Ok<T>(statusCode: number,
@@ -12,12 +12,11 @@ export class Result {
         };
     }
 
-    public static Error(statusCode: number, message?: string, ...details: IErrorDetail[]): IHttpError {
-        return {
-            success: false,
+    public static Error(statusCode: number, message?: string, ...details: IErrorDetail[]): HttpError {
+        return new HttpError(
             statusCode,
             message,
-            details
-        };
+            ...details
+        );
     }
 }

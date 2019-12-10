@@ -123,8 +123,10 @@ describe('handler', () => {
 
         const result = await callHandler(handle) as APIGatewayProxyResult;
         expect(result.statusCode).toEqual(301);
-        expect(JSON.parse(result.body)).toEqual({
+        const body = JSON.parse(result.body);
+        expect(body).toEqual({
             details: [],
+            message: '',
             name: 'Moved Permanently',
             status: 301
         });
@@ -142,6 +144,7 @@ describe('handler', () => {
         expect(result.statusCode).toEqual(500);
         const resultBodyObject = JSON.parse(result.body);
         expect(resultBodyObject.name).toBe('Server Error');
+        expect(resultBodyObject.message).toBe(errorMessage);
         expect(resultBodyObject.status).toBe(500);
         expect(resultBodyObject.details.length).toBe(1);
         expect(resultBodyObject.details[0].name).toBe('Unexpected Error');

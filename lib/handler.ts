@@ -84,30 +84,20 @@ export function handler<
                     };
                 }
 
-                return errorTransformer(result);
+                return errorTransformer(result, options);
             } catch (error) {
-                let defaultErrorDetails: IErrorDetail[] = [];
-
-                if (options.showStackTrace) {
-                    const errorDetail: IErrorDetail = {
-                        name: 'Unexpected Error',
-                        message: error.stack
-                    };
-                    defaultErrorDetails = [errorDetail];
-                }
 
                 if (error instanceof HttpError) {
-                    return errorTransformer(error);
+                    return errorTransformer(error, options);
                 }
 
                 // Log unexpected errors
                 logger.error(error);
 
-                return errorTransformer({
-                    statusCode: INTERNAL_SERVER_ERROR,
-                    success: false,
-                    details: defaultErrorDetails
-                });
+                return errorTransformer(new HttpError(
+                    INTERNAL_SERVER_ERROR,
+                    error.message
+                ), options);
             }
         };
 }
