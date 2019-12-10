@@ -31,6 +31,11 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
      * Optional logger. If none is set a default console logger will be used
      */
     logger?: winston.Logger;
+
+    /*
+    * On error, allows stacktrace to be shown. By default it is false;
+    */
+    showStackTrace?: boolean;
 }
 
 export interface Dictionary { [name: string]: string; }

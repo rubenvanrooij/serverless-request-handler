@@ -130,9 +130,11 @@ describe('handler', () => {
         });
     });
 
-    it('should catch any unexpected error', async () => {
+    it('should catch any unexpected error when showStackTrace is enabled', async () => {
         const errorMessage = 'UNEXPECTED_ERROR';
-        const handle = handler({}, async () => {
+        const handle = handler({
+            showStackTrace: true
+        }, async () => {
             throw new Error(errorMessage);
         });
 

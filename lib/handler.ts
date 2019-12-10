@@ -86,16 +86,18 @@ export function handler<
 
                 return errorTransformer(result);
             } catch (error) {
-                let defaultErrorDetails = [];
+                let defaultErrorDetails: IErrorDetail[] = [];
 
-                if (error instanceof HttpError) {
-                    return errorTransformer(error);
-                } else {
+                if (options.showStackTrace) {
                     const errorDetail: IErrorDetail = {
                         name: 'Unexpected Error',
                         message: error.stack
                     };
                     defaultErrorDetails = [errorDetail];
+                }
+
+                if (error instanceof HttpError) {
+                    return errorTransformer(error);
                 }
 
                 // Log unexpected errors
