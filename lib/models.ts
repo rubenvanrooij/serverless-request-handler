@@ -2,6 +2,7 @@ import { ValidatorOptions } from 'class-validator';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { APIGatewayProxyResult } from 'aws-lambda';
 import winston from 'winston';
+import { HttpError } from './http-error';
 
 // TODO: Add required option
 export interface ValidateOptions<T> {
@@ -25,12 +26,17 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
     /**
      * Optional error transformer to customize the error response
      */
-    errorTransformer?: (error: IHttpError) => APIGatewayProxyResult;
+    errorTransformer?: (error: HttpError) => APIGatewayProxyResult;
 
     /**
      * Optional logger. If none is set a default console logger will be used
      */
     logger?: winston.Logger;
+
+    /*
+    * On error, allows stacktrace to be shown. By default it is false;
+    */
+    showStackTrace?: boolean;
 }
 
 export interface Dictionary { [name: string]: string; }
@@ -64,4 +70,4 @@ export interface IHttpError {
     details: IErrorDetail[];
 }
 
-export type ResultResponse<T> = Promise<IOk<T> | IHttpError>;
+export type ResultResponse<T> = Promise<IOk<T> | HttpError>;

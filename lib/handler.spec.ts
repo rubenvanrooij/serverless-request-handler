@@ -1,5 +1,5 @@
-import { ResultResponse } from './models';
-import { APIGatewayProxyEvent, APIGatewayEventRequestContext, Context, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayEventRequestContext, Context, APIGatewayProxyHandler,
+         APIGatewayProxyResult } from 'aws-lambda';
 import { Result } from './result';
 import { IsString, IsNumber } from 'class-validator';
 import { handler } from './handler';
@@ -123,25 +123,32 @@ describe('handler', () => {
 
         const result = await callHandler(handle) as APIGatewayProxyResult;
         expect(result.statusCode).toEqual(301);
-        expect(JSON.parse(result.body)).toEqual({
+        const body = JSON.parse(result.body);
+        expect(body).toEqual({
             details: [],
+            message: '',
             name: 'Moved Permanently',
             status: 301
         });
     });
 
-    it('should catch any unexpected error', async () => {
-        const handle = handler({}, async () => {
-            throw new Error('UNEXPECTED_ERROR');
+    it('should catch any unexpected error when showStackTrace is enabled', async () => {
+        const errorMessage = 'UNEXPECTED_ERROR';
+        const handle = handler({
+            showStackTrace: true
+        }, async () => {
+            throw new Error(errorMessage);
         });
 
         const result = await callHandler(handle) as APIGatewayProxyResult;
         expect(result.statusCode).toEqual(500);
-        expect(JSON.parse(result.body)).toEqual({
-            details: [],
-            name: 'Server Error',
-            status: 500
-        });
+        const resultBodyObject = JSON.parse(result.body);
+        expect(resultBodyObject.name).toBe('Server Error');
+        expect(resultBodyObject.message).toBe(errorMessage);
+        expect(resultBodyObject.status).toBe(500);
+        expect(resultBodyObject.details.length).toBe(1);
+        expect(resultBodyObject.details[0].name).toBe('Unexpected Error');
+        expect(resultBodyObject.details[0].message.includes(errorMessage)).toBe(true);
     });
 
     it('should be able to succesfully transform and validate a response', async () => {

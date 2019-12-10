@@ -1,5 +1,5 @@
 import { defaultLogger } from './console-logger';
-import { HandlerOptions, ProxyEvent, ResultResponse, Dictionary } from './models';
+import { HandlerOptions, ProxyEvent, ResultResponse, Dictionary, IErrorDetail } from './models';
 import { APIGatewayProxyHandler, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { convertAndValidate } from './convert-and-validate';
 import { INTERNAL_SERVER_ERROR } from 'http-status-codes';
@@ -84,21 +84,20 @@ export function handler<
                     };
                 }
 
-                return errorTransformer(result);
+                return errorTransformer(result, options);
             } catch (error) {
 
                 if (error instanceof HttpError) {
-                    return errorTransformer(error);
+                    return errorTransformer(error, options);
                 }
 
                 // Log unexpected errors
                 logger.error(error);
 
-                return errorTransformer({
-                    statusCode: INTERNAL_SERVER_ERROR,
-                    success: false,
-                    details: []
-                });
+                return errorTransformer(new HttpError(
+                    INTERNAL_SERVER_ERROR,
+                    error.message
+                ), options);
             }
         };
 }
