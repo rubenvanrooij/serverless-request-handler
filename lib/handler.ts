@@ -65,7 +65,8 @@ export function handler<
                     pathParameters: pathParameters as T3,
                     headers: headers as T4,
                     httpMethod: proxyEvent.httpMethod,
-                    path: proxyEvent.path
+                    path: proxyEvent.path,
+                    context: proxyEvent.requestContext
                 });
 
                 if (result.success) {
