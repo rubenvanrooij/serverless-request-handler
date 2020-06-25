@@ -1,6 +1,6 @@
 import { ValidatorOptions } from 'class-validator';
 import { ClassType } from 'class-transformer/ClassTransformer';
-import { APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyResult, APIGatewayEventRequestContext } from 'aws-lambda';
 import winston from 'winston';
 import { HttpError } from './http-error';
 
@@ -48,6 +48,7 @@ export interface ProxyEvent<TBody, TQueryParams, TPathParameters, THeaders> {
     pathParameters: TPathParameters;
     httpMethod: string;
     path: string;
+    context: APIGatewayEventRequestContext;
 }
 
 export interface IOk<T> {
