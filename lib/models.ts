@@ -39,6 +39,8 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
     showStackTrace?: boolean;
 }
 
+export interface GenericHandlerOptions extends HandlerOptions<any, any, any, any, any> {}
+
 export interface Dictionary { [name: string]: string; }
 
 export interface ProxyEvent<TBody, TQueryParams, TPathParameters, THeaders> {
