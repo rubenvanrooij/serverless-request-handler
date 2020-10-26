@@ -72,7 +72,13 @@ export function handler<
 }
 
 function selectProvider(options: GenericHandlerOptions, logger: winston.Logger): Provider {
-    return new (require('./providers/aws/provider')).AWSProvider(options, logger);
+    switch (process.env.PROVIDER) {
+        default:
+        case 'aws':
+            return new (require('./providers/aws/provider')).AWSProvider(options, logger);
+        case 'google':
+            return new (require('./providers/google/provider')).GoogleProvider(options, logger);
+    }
 }
 
 async function validateRequest(options: GenericHandlerOptions, request: IProviderRequest): Promise<IProviderRequest> {

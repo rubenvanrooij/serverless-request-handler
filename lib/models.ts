@@ -97,7 +97,7 @@ export interface IProviderResponse<T> {
     success: boolean;
     statusCode: number;
     body?: T;
-    headers?: { [header: string]: boolean | number | string; };
+    headers?: { [header: string]: boolean | number | string };
 }
 
 export type GenericProviderHandler = (...providerParams: any[]) => Promise<any>;
