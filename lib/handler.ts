@@ -1,13 +1,19 @@
 import { defaultLogger } from './console-logger';
-import { HandlerOptions, ProxyEvent, ResultResponse, Dictionary, IOk, GenericHandlerOptions } from './models';
-import { APIGatewayProxyHandler, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import {
+    HandlerOptions,
+    Dictionary,
+    IOk,
+    GenericHandlerOptions,
+    Handler,
+    GenericProviderHandler,
+    IProviderRequest
+} from './models';
 import { convertAndValidate } from './convert-and-validate';
 import { INTERNAL_SERVER_ERROR } from 'http-status-codes';
-import { convertToJson } from './convert-to-json';
 import { defaultErrorTransformer } from './default-error-transformer';
 import { HttpError } from './http-error';
-import { IProviderRequest, Provider } from './providers';
-import { Logger } from 'winston';
+import { Provider } from './providers';
+import winston from 'winston';
 
 const ERROR_MESSAGES = {
     INVALID_BODY: 'Invalid body',
@@ -24,7 +30,7 @@ export function handler<
     T4 = Dictionary | null,
     TResponse = unknown>(
         options: HandlerOptions<T1, T2, T3, T4, TResponse>,
-        eventHandler: (event: ProxyEvent<T1, T2, T3, T4>) => ResultResponse<TResponse>): APIGatewayProxyHandler {
+        eventHandler: Handler<T1, T2, T3, T4, TResponse>): GenericProviderHandler {
 
         const errorTransformer = options.errorTransformer || defaultErrorTransformer;
         const logger = options.logger || defaultLogger;
@@ -48,99 +54,24 @@ export function handler<
                     return provider.transformResponse(validatedResponse, ...providerParams);
                 }
 
-                return errorTransformer(response, options);
+                return provider.transformResponse(errorTransformer(response, options));
             } catch (error) {
                 if (error instanceof HttpError) {
-                    return errorTransformer(error, options);
+                    return provider.transformResponse(errorTransformer(error, options));
                 }
 
                 // Log unexpected errors
                 logger.error(error);
 
-                return errorTransformer(new HttpError(
+                return provider.transformResponse(errorTransformer(new HttpError(
                     INTERNAL_SERVER_ERROR,
                     error.message
-                ), options);
-            }
-        };
-
-        return async (proxyEvent: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-
-            try {
-
-                const pathParameters = options.pathParameters ?
-                    await convertAndValidate(
-                            proxyEvent.pathParameters || {},
-                            options.pathParameters,
-                            ERROR_MESSAGES.INVALID_PATH_PARAMETERS
-                        ) : proxyEvent.pathParameters;
-
-                const queryParameters = options.queryParameters ?
-                    await convertAndValidate(
-                            proxyEvent.queryStringParameters || {},
-                            options.queryParameters,
-                            ERROR_MESSAGES.INVALID_QUERY_PARAMETERS
-                        ) : proxyEvent.queryStringParameters;
-
-                const headers = options.headers ?
-                    await convertAndValidate(
-                            proxyEvent.headers,
-                            options.headers,
-                            ERROR_MESSAGES.INVALID_HEADERS
-                        ) : proxyEvent.headers;
-
-                const body = options.body ?
-                    await convertAndValidate(
-                            convertToJson(proxyEvent.body, logger),
-                            options.body,
-                            ERROR_MESSAGES.INVALID_BODY
-                        ) : proxyEvent.body;
-
-                const result = await eventHandler({
-                    body: body as T1,
-                    queryParameters: queryParameters as T2,
-                    pathParameters: pathParameters as T3,
-                    headers: headers as T4,
-                    httpMethod: proxyEvent.httpMethod,
-                    path: proxyEvent.path,
-                    context: proxyEvent.requestContext
-                });
-
-                if (result.success) {
-
-                    const validatedBody = options.response ?
-                        await convertAndValidate(
-                            result.body,
-                            options.response,
-                            ERROR_MESSAGES.INVALID_RESPONSE
-                        ) : result.body;
-
-                    return {
-                        statusCode: result.statusCode,
-                        body: validatedBody ? JSON.stringify(validatedBody) : '',
-                        headers: result.headers
-                    };
-                }
-
-                return errorTransformer(result, options);
-            } catch (error) {
-
-                if (error instanceof HttpError) {
-                    return errorTransformer(error, options);
-                }
-
-                // Log unexpected errors
-                logger.error(error);
-
-                return errorTransformer(new HttpError(
-                    INTERNAL_SERVER_ERROR,
-                    error.message
-                ), options);
+                ), options));
             }
         };
 }
 
-function selectProvider(options: GenericHandlerOptions, logger: Logger): Provider {
+function selectProvider(options: GenericHandlerOptions, logger: winston.Logger): Provider {
     return new (require('./providers/aws/provider')).AWSProvider(options, logger);
 }
 

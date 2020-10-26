@@ -1,17 +1,16 @@
-import { Logger } from 'winston';
-import { GenericHandlerOptions, IOk } from '../models';
-import { IProviderRequest } from './provider-request.interface';
+import winston from 'winston';
+import { GenericHandler, GenericHandlerOptions, IProviderRequest, IProviderResponse } from '../models';
 
 export abstract class Provider {
     protected options: GenericHandlerOptions;
-    protected logger: Logger;
+    protected logger: winston.Logger;
 
-    constructor(options: GenericHandlerOptions, logger: Logger) {
+    constructor(options: GenericHandlerOptions, logger: winston.Logger) {
         this.options = options;
         this.logger = logger;
     }
 
     public abstract transformRequest(...providerParams: any): IProviderRequest;
-    public abstract transformResponse<T>(response: IOk<T>, ...providerParams: any): any;
-    public abstract trace(handler: any): Promise<void>;
+    public abstract transformResponse<T>(response: IProviderResponse<T>, ...providerParams: any): any;
+    public abstract async trace(handler: GenericHandler): Promise<void>;
 }

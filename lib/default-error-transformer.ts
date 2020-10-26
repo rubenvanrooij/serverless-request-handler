@@ -1,9 +1,9 @@
 import { getStatusText } from 'http-status-codes';
-import { APIGatewayProxyResult } from 'aws-lambda';
 import { HttpError } from './http-error';
+import { IError, IProviderResponse } from './models';
 
 export function defaultErrorTransformer(error: HttpError,
-                                        options: { showStackTrace?: boolean }): APIGatewayProxyResult {
+                                        options: { showStackTrace?: boolean }): IProviderResponse<IError> {
 
     const stackTraceDetails = options.showStackTrace ? [{
         name: 'Unexpected Error',
@@ -11,8 +11,9 @@ export function defaultErrorTransformer(error: HttpError,
     }] : [];
 
     return {
+        success: false,
         statusCode: error.statusCode,
-        body: JSON.stringify({
+        body: {
             status: error.statusCode,
             name: getStatusText(error.statusCode),
             message: error.message,
@@ -20,6 +21,6 @@ export function defaultErrorTransformer(error: HttpError,
                 ...error.details,
                 ...stackTraceDetails
             ]
-        })
+        }
     };
 }

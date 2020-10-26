@@ -1,8 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { convertToJson } from '../../convert-to-json';
-import { IOk } from '../../models';
+import { GenericHandler, IProviderRequest, IProviderResponse } from '../../models';
 import { Provider } from '../provider';
-import { IProviderRequest } from '../provider-request.interface';
 
 // export interface IAWSEvent {
 //     body: string | null;
@@ -40,7 +39,7 @@ export class AWSProvider extends Provider {
         };
     }
 
-    public transformResponse<T>(response: IOk<T>): APIGatewayProxyResult {
+    public transformResponse<T>(response: IProviderResponse<T>): APIGatewayProxyResult {
         return {
             statusCode: response.statusCode,
             body: response.body ? JSON.stringify(response.body) : '',
@@ -48,7 +47,7 @@ export class AWSProvider extends Provider {
         };
     }
 
-    public trace(handler: any): Promise<void> {
+    public async trace(handler: GenericHandler): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }
