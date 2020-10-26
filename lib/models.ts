@@ -36,6 +36,9 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
     * On error, allows stacktrace to be shown. By default it is false;
     */
     showStackTrace?: boolean;
+
+    httpMethod?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
+    pathParameterMap?: string[];
 }
 
 export interface GenericHandlerOptions extends HandlerOptions<any, any, any, any, any> {}

@@ -1,11 +1,11 @@
-import { GenericHandler, IProviderRequest, IProviderResponse } from '../../models';
+import { Dictionary, GenericHandler, IProviderRequest, IProviderResponse } from '../../models';
 import { Provider } from '../provider';
 
 interface IGoogleRequest {
     method: string;
     headers: { [header: string]: boolean | number | string };
-    query: { [param: string]: string };
-    params: { [param: string]: string };
+    query: Dictionary;
+    params: Dictionary;
     body: { [name: string]: any };
     url: string;
 }
@@ -22,7 +22,7 @@ export class GoogleProvider extends Provider {
             body: req.body,
             headers: req.headers,
             queryParameters: req.query,
-            pathParameters: req.params,
+            pathParameters: this.parsePathParameters(req.params),
             httpMethod: req.method.toUpperCase(),
             path: req.url,
             context: null,
@@ -37,5 +37,20 @@ export class GoogleProvider extends Provider {
 
     public async trace(handler: GenericHandler): Promise<void> {
         throw new Error('Method not implemented.');
+    }
+
+    private parsePathParameters(params: Dictionary): Dictionary {
+        const parts = params['0'].split('/');
+        const parameters: Dictionary = {};
+
+        for (let i = 0; i < parts.length; i++) {
+            if (this.options.pathParameterMap && this.options.pathParameterMap[i]) {
+                parameters[this.options.pathParameterMap[i]] = parts[i];
+            } else {
+                parameters[i + ''] = parts[i];
+            }
+        }
+
+        return parameters;
     }
 }
