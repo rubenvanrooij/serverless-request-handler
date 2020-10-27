@@ -41,16 +41,32 @@ export class GoogleProvider extends Provider {
         };
     }
 
+    /**
+     * Transform the response to a response Google can understand.
+     * @param {IProviderResponse<T>} response - The response to transform.
+     */
     public transformResponse<T>(response: IProviderResponse<T>, req: IGoogleRequest, res: IGoogleResponse): void {
         res.status(response.statusCode);
         res.set(response.headers || {});
         res.send(response.body || {});
     }
 
-    public async trace(handler: GenericHandler): Promise<void> {
+    /**
+     * Trace the execution of the provided handler using StackDriver tracing.
+     * @param {GenericHandler} handler - The handler to trace.
+     * @param {GenericProxyEvent} event - The event to pass to the handler.
+     * @returns {ResultResponse<T>} - The response of the handler.
+     */
+    public async trace<T>(handler: GenericHandler, event: GenericProxyEvent): ResultResponse<T> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * The path parameters provided by Google are not mapped to a key.
+     * Parse them by taking each parameter and assigning them to the key defined in the pathParameterMap.
+     * @param {Dictionary} params - The parameters to parse.
+     * @returns {Dictionary} - The parsed parameters.
+     */
     private parsePathParameters(params: Dictionary): Dictionary {
         const parts = params['0'].split('/');
         const parameters: Dictionary = {};

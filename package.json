@@ -48,6 +48,7 @@
     "winston": "^3.2.1"
   },
   "peerDependencies": {
+    "aws-xray-sdk": "^3.2.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1"
   }

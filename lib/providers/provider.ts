@@ -1,5 +1,12 @@
 import winston from 'winston';
-import { GenericHandler, GenericHandlerOptions, IProviderRequest, IProviderResponse } from '../models';
+import {
+    GenericHandler,
+    GenericHandlerOptions,
+    GenericProxyEvent,
+    IProviderRequest,
+    IProviderResponse,
+    ResultResponse
+} from '../models';
 
 export abstract class Provider {
     protected options: GenericHandlerOptions;
@@ -12,5 +19,5 @@ export abstract class Provider {
 
     public abstract transformRequest(...providerParams: any): IProviderRequest;
     public abstract transformResponse<T>(response: IProviderResponse<T>, ...providerParams: any): any;
-    public abstract async trace(handler: GenericHandler): Promise<void>;
+    public abstract async trace<T>(handler: GenericHandler, event: GenericProxyEvent): ResultResponse<T>;
 }
