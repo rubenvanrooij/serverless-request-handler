@@ -1,4 +1,6 @@
-import { Dictionary, GenericHandler, IProviderRequest, IProviderResponse } from '../../models';
+import { METHOD_NOT_ALLOWED } from 'http-status-codes';
+import { HttpError } from '../../http-error';
+import { Dictionary, GenericHandler, GenericProxyEvent, IProviderRequest, IProviderResponse, ResultResponse } from '../../models';
 import { Provider } from '../provider';
 
 interface IGoogleRequest {
@@ -17,7 +19,17 @@ interface IGoogleResponse {
 }
 
 export class GoogleProvider extends Provider {
+    /**
+     * Transform a request from Google to an IProviderRequest.
+     * @param {IGoogleRequest} req - The Google request.
+     * @returns {IProviderRequest} - The transformed data.
+     */
     public transformRequest(req: IGoogleRequest): IProviderRequest {
+        // If a HTTP method is defined, limit execution to that method.
+        if (this.options.httpMethod && this.options.httpMethod !== req.method.toUpperCase()) {
+            throw new HttpError(METHOD_NOT_ALLOWED);
+        }
+
         return {
             body: req.body,
             headers: req.headers,

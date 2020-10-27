@@ -39,6 +39,7 @@ export interface HandlerOptions<TBody, TQueryParams, TPathParameters, THeaders, 
 
     httpMethod?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
     pathParameterMap?: string[];
+    traceName?: string;
 }
 
 export interface GenericHandlerOptions extends HandlerOptions<any, any, any, any, any> {}
@@ -55,6 +56,8 @@ export interface ProxyEvent<TBody, TQueryParams, TPathParameters, THeaders> {
     // context: APIGatewayEventRequestContext;
     context: any;
 }
+
+export interface GenericProxyEvent extends ProxyEvent<any, any, any, any> {}
 
 export interface IOk<T> {
     success: true;
