@@ -44,10 +44,10 @@ export function handler<
                 const validatedRequest = await validateRequest(options, request);
                 const event = {
                     ...validatedRequest,
-                    body: request.body as T1,
-                    queryParameters: request.queryParameters as T2,
-                    pathParameters: request.pathParameters as T3,
-                    headers: request.headers as T4,
+                    body: validatedRequest.body as T1,
+                    queryParameters: validatedRequest.queryParameters as T2,
+                    pathParameters: validatedRequest.pathParameters as T3,
+                    headers: validatedRequest.headers as T4,
                 };
 
                 // Execute the handler with optional tracing.
