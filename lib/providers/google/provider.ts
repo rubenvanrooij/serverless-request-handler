@@ -1,3 +1,4 @@
+import * as googleTracing from '@google-cloud/trace-agent';
 import { METHOD_NOT_ALLOWED } from 'http-status-codes';
 import { HttpError } from '../../http-error';
 import { Dictionary, GenericHandler, GenericProxyEvent, IProviderRequest, IProviderResponse, ResultResponse } from '../../models';
@@ -17,6 +18,11 @@ interface IGoogleResponse {
     set(headers: { [header: string]: boolean | number | string }): void;
     send(body: { [name: string]: any }): void;
 }
+
+// Initialize the StackDriver trace agent.
+// Maybe move this to the user to execute?
+// As it might have problems tracing stuff when loaded at the time the provider is loaded.
+googleTracing.start();
 
 export class GoogleProvider extends Provider {
     /**
@@ -58,7 +64,21 @@ export class GoogleProvider extends Provider {
      * @returns {ResultResponse<T>} - The response of the handler.
      */
     public async trace<T>(handler: GenericHandler, event: GenericProxyEvent): ResultResponse<T> {
-        throw new Error('Method not implemented.');
+        return new Promise((resolve, reject) => {
+            // This will create a separate trace.
+            // The root span that is created from Cloud Functions doesn't seem to be accessible.
+            googleTracing.get().runInRootSpan({ name: this.options.traceName! }, async (span) => {
+                try {
+                    const response = await handler(event);
+                    span.endSpan();
+                    resolve(response);
+                } catch (err) {
+                    this.logger.error('Error before span end', err);
+                    span.endSpan();
+                    reject(err);
+                }
+            });
+        });
     }
 
     /**
