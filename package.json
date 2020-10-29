@@ -21,6 +21,7 @@
   "author": "Ruben v. Rooij",
   "license": "MIT",
   "devDependencies": {
+    "@azure/functions": "^1.2.2",
     "@semantic-release/changelog": "^3.0.6",
     "@semantic-release/git": "^7.0.18",
     "@team-griffin/install-self-peers": "^1.1.1",

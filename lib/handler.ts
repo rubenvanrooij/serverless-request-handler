@@ -32,6 +32,8 @@ export function handler<
     TResponse = unknown>(
         options: HandlerOptions<T1, T2, T3, T4, TResponse>,
         eventHandler: Handler<T1, T2, T3, T4, TResponse>): GenericProviderHandler {
+        // TODO: add support for tracing the transformation and validation as separate segments.
+        // TODO: add support for generating Swagger documentation based on the validation.
 
         const errorTransformer = options.errorTransformer || defaultErrorTransformer;
         const logger = options.logger || defaultLogger;
@@ -93,6 +95,8 @@ function selectProvider(options: GenericHandlerOptions, logger: winston.Logger):
         default:
         case 'aws':
             return new (require('./providers/aws')).AWSProvider(options, logger);
+        case 'azure':
+            return new (require('./providers/azure')).AzureProvider(options, logger);
         case 'google':
             return new (require('./providers/google')).GoogleProvider(options, logger);
     }
