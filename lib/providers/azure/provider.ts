@@ -1,7 +1,16 @@
 import { URL } from 'url';
 import { Context, HttpRequest } from '@azure/functions';
+import * as azureTracing from 'applicationinsights';
+import { TRACING_ENABLED } from '../../constants';
 import { GenericHandler, GenericProxyEvent, IProviderRequest, IProviderResponse, ResultResponse } from '../../models';
 import { Provider } from '../provider';
+
+// Initialize the Application Insights agent.
+// Maybe move this to the user to execute?
+// As it might have problems tracing stuff when loaded at the time the provider is loaded.
+if (TRACING_ENABLED) {
+    azureTracing.setup('74cf4922-6061-4880-a10f-85b466288cca').start();
+}
 
 export class AzureProvider extends Provider {
     /**
@@ -45,6 +54,32 @@ export class AzureProvider extends Provider {
      * @returns {ResultResponse<T>} - The response of the handler.
      */
     public async trace<T>(handler: GenericHandler, event: GenericProxyEvent): ResultResponse<T> {
-        throw new Error('Not implemented');
+        const correlationContext = azureTracing.startOperation(event.context, event.context.req);
+
+        return new Promise(async (resolve, reject) => {
+            azureTracing.wrapWithCorrelationContext(async () => {
+                // Save the start time as we have to trace the duration ourselves.
+                const startTime = Date.now();
+
+                try {
+                    const response = await handler(event);
+                    resolve(response);
+                } catch (err) {
+                    azureTracing.defaultClient.trackException({ exception: err });
+                    reject(err);
+                }
+
+                // We use a page view here because using a request creates a new trace.
+                // With short response times the duration is not always displayed correctly in Application Insights.
+                azureTracing.defaultClient.trackPageView({
+                    name: this.options.traceName,
+                    duration: Date.now() - startTime,
+                    time: new Date(startTime)
+                });
+                // Immediately write the trace, this is likely to create a delay in function response time.
+                // TODO: Maybe we can skip flushing as the event loop keeps running in the background?
+                azureTracing.defaultClient.flush();
+            }, correlationContext!)();
+        });
     }
 }

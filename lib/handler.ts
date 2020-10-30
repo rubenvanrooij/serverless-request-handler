@@ -8,6 +8,7 @@ import {
     GenericProviderHandler,
     IProviderRequest
 } from './models';
+import { PROVIDER, TRACING_ENABLED } from './constants';
 import { convertAndValidate } from './convert-and-validate';
 import { INTERNAL_SERVER_ERROR } from 'http-status-codes';
 import { defaultErrorTransformer } from './default-error-transformer';
@@ -15,7 +16,6 @@ import { HttpError } from './http-error';
 import { Provider } from './providers';
 import winston from 'winston';
 
-const TRACING_ENABLED = process.env.TRACING_ENABLED === 'true' && process.env.IS_OFFLINE !== 'true';
 const ERROR_MESSAGES = {
     INVALID_BODY: 'Invalid body',
     INVALID_QUERY_PARAMETERS: 'Invalid query parameters',
@@ -91,7 +91,7 @@ export function handler<
  * @param {winston.Logger} logger - The logger to use for the provider instance.
  */
 function selectProvider(options: GenericHandlerOptions, logger: winston.Logger): Provider {
-    switch (process.env.PROVIDER) {
+    switch (PROVIDER) {
         default:
         case 'aws':
             return new (require('./providers/aws')).AWSProvider(options, logger);

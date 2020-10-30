@@ -1,5 +1,6 @@
 import * as googleTracing from '@google-cloud/trace-agent';
 import { METHOD_NOT_ALLOWED } from 'http-status-codes';
+import { TRACING_ENABLED } from '../../constants';
 import { HttpError } from '../../http-error';
 import { Dictionary, GenericHandler, GenericProxyEvent, IProviderRequest, IProviderResponse, ResultResponse } from '../../models';
 import { Provider } from '../provider';
@@ -22,7 +23,9 @@ interface IGoogleResponse {
 // Initialize the StackDriver trace agent.
 // Maybe move this to the user to execute?
 // As it might have problems tracing stuff when loaded at the time the provider is loaded.
-googleTracing.start();
+if (TRACING_ENABLED) {
+    googleTracing.start();
+}
 
 export class GoogleProvider extends Provider {
     /**
