@@ -9,7 +9,7 @@ import { Provider } from '../provider';
 // Maybe move this to the user to execute?
 // As it might have problems tracing stuff when loaded at the time the provider is loaded.
 if (TRACING_ENABLED) {
-    azureTracing.setup('74cf4922-6061-4880-a10f-85b466288cca').start();
+    azureTracing.setup().start();
 }
 
 export class AzureProvider extends Provider {
