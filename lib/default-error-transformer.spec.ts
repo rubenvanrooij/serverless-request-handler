@@ -7,8 +7,14 @@ describe('default-error-transformer', () => {
         const error: HttpError = new HttpError(201, 'message');
 
         expect(defaultErrorTransformer(error, { showStackTrace: false })).toEqual({
+            success: false,
             statusCode: 201,
-            body: '{"status":201,"name":"Created","message":"message","details":[]}'
+            body: {
+                status: 201,
+                name: 'Created',
+                message: 'message',
+                details: []
+            },
         });
     });
 });

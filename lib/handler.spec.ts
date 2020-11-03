@@ -190,4 +190,79 @@ describe('handler', () => {
         expect(result.statusCode).toEqual(400);
         expect(JSON.parse(result.body).message).toEqual('Invalid response');
     });
+
+    it('should select the correct provider', async () => {
+        // tslint:disable-next-line: variable-name
+        const AWSProvider = jest.fn();
+        jest.mock('./providers/aws/provider', () => ({ AWSProvider }));
+        // tslint:disable-next-line: variable-name
+        const AzureProvider = jest.fn();
+        jest.mock('./providers/azure/provider', () => ({ AzureProvider }));
+        // tslint:disable-next-line: variable-name
+        const GoogleProvider = jest.fn();
+        jest.mock('./providers/google/provider', () => ({ GoogleProvider }));
+
+        // Default
+        jest.clearAllMocks();
+        jest.resetModules();
+        (await import('./handler')).handler({}, async () => Result.Ok(OK));
+        expect(AWSProvider).toHaveBeenCalledTimes(1);
+        expect(AzureProvider).not.toHaveBeenCalled();
+        expect(GoogleProvider).not.toHaveBeenCalled();
+
+        // AWS
+        jest.clearAllMocks();
+        jest.resetModules();
+        process.env.PROVIDER = 'aws';
+        (await import('./handler')).handler({}, async () => Result.Ok(OK));
+        expect(AWSProvider).toHaveBeenCalledTimes(1);
+        expect(AzureProvider).not.toHaveBeenCalled();
+        expect(GoogleProvider).not.toHaveBeenCalled();
+
+        // Azure
+        jest.clearAllMocks();
+        jest.resetModules();
+        process.env.PROVIDER = 'azure';
+        (await import('./handler')).handler({}, async () => Result.Ok(OK));
+        expect(AWSProvider).not.toHaveBeenCalled();
+        expect(AzureProvider).toHaveBeenCalledTimes(1);
+        expect(GoogleProvider).not.toHaveBeenCalled();
+
+        // Google
+        jest.clearAllMocks();
+        jest.resetModules();
+        process.env.PROVIDER = 'google';
+        (await import('./handler')).handler({}, async () => Result.Ok(OK));
+        expect(AWSProvider).not.toHaveBeenCalled();
+        expect(AzureProvider).not.toHaveBeenCalled();
+        expect(GoogleProvider).toHaveBeenCalledTimes(1);
+
+        delete process.env.PROVIDER;
+    });
+
+    it('should call trace when tracing is enabled', async () => {
+        const trace = jest.fn();
+        // tslint:disable-next-line: max-classes-per-file
+        class AWSProvider {
+            public transformRequest = jest.fn(() => ({}));
+            public transformResponse = jest.fn();
+            public trace = trace;
+        }
+        jest.mock('./providers/aws/provider', () => ({ AWSProvider }));
+
+        // Without tracing
+        jest.resetModules();
+        const handle = (await import('./handler')).handler({ traceName: 'test' }, async () => Result.Ok(OK));
+        await handle();
+        expect(trace).not.toHaveBeenCalled();
+
+        // With tracing
+        jest.resetModules();
+        process.env.TRACING_ENABLED = 'true';
+        const tracedHandle = (await import('./handler')).handler({ traceName: 'test' }, async () => Result.Ok(OK));
+        await tracedHandle();
+        expect(trace).toHaveBeenCalledTimes(1);
+
+        delete process.env.TRACING_ENABLED;
+    });
 });
